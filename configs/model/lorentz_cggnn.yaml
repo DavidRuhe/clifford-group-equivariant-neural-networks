@@ -1,0 +1,2 @@
+model:
+  module: models.lorentz_cggnn.LorentzCGGNN

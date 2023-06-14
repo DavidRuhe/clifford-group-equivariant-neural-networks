@@ -1,0 +1,3 @@
+dataset:
+  module: data.nbody.NBody
+  num_samples: 256

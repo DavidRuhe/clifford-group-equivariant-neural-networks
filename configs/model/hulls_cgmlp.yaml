@@ -1,0 +1,2 @@
+model:
+  module: models.hulls_cgmlp.ConvexHullCGMLP

@@ -3,19 +3,22 @@
 
 **Authors:** David Ruhe, Johannes Brandstetter, Patrick Forré
 
+<ul>
+<li>
 <a href="https://arxiv.org/abs/2305.11141">
     <strong>Paper Link: </strong> <img src="https://upload.wikimedia.org/wikipedia/commons/b/bc/ArXiv_logo_2022.svg" height="20" alt="arXiv">
 </a>
-
-
+</li>
+<li>
 <a href="https://colab.research.google.com/drive/1Lwxn11gLBtUkNU9s0DV3QgFFedNjFBl3?usp=sharing">
     <strong>Google Colaboratory Tutorial:</strong> <img src="https://colab.research.google.com/assets/colab-badge.svg" height="20">
 </a>
-
-
+</li>
+<li>
 <a href="https://davidruhe.github.io">
     <strong>Blog Post Series C2C:</strong> <img src="https://upload.wikimedia.org/wikipedia/commons/9/91/Octicons-mark-github.svg" height="20">
 </a>
+</li>
 
 ## Abstract
 We introduce Clifford Group Equivariant Neural Networks: a novel approach for constructing $\mathrm{O}(n)$- and $\mathrm{E}(n)$-equivariant models.

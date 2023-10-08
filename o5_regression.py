@@ -11,7 +11,7 @@ def main(config):
 
     model_config = config["model"]
     model_module = engineer.load_module(model_config.pop("module"))
-    model = model_module(**model_config)
+    model = model_module(dataset.ymean, dataset.ystd, **model_config)
 
     model = model.cuda()
 

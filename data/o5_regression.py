@@ -44,6 +44,8 @@ class O5Dataset:
 
         self.batch_size = batch_size
 
+        self.ymean, self.ystd = self.train_dataset.stats[-2].item(), self.train_dataset.stats[-1].item()
+
         self._normalize_datasets()
 
     def _normalize_datasets(self):

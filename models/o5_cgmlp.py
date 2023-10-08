@@ -9,6 +9,8 @@ from models.modules.linear import MVLinear
 
 class O5CGMLP(nn.Module):
     def __init__(
+        ymean, 
+        ystd,
         self,
     ):
         super().__init__()
@@ -23,14 +25,16 @@ class O5CGMLP(nn.Module):
         )
 
         self.gp = nn.Sequential(
-            MVLinear(self.algebra, 2, 3, subspaces=False),
-            SteerableGeometricProductLayer(self.algebra, 3),
+            MVLinear(self.algebra, 2, 8, subspaces=False),
+            SteerableGeometricProductLayer(self.algebra, 8),
         )
 
         self.mlp = nn.Sequential(
-            nn.Linear(3, 32),
-            nn.SiLU(),
-            nn.Linear(32, 1),
+            nn.Linear(8, 580),
+            nn.ReLU(),
+            nn.Linear(580, 580),
+            nn.ReLU(),
+            nn.Linear(580, 1),
         )
 
         self.train_metrics = MetricCollection(
@@ -56,9 +60,11 @@ class O5CGMLP(nn.Module):
         input = self.algebra.embed_grade(points, 1)
 
         y = self._forward(input)
+        normalized_y = y * self.ystd + self.ymean
+        normalized_products = products * self.ystd + self.ymean
 
         assert y.shape == products.shape, breakpoint()
-        loss = F.mse_loss(y, products.float(), reduction="none")
+        loss = F.mse_loss(normalized_y, normalized_products.float(), reduction="none")
         return loss.mean(), {
             "loss": loss,
         }

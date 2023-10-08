@@ -1,15 +1,30 @@
-# [Clifford Group Equivariant Networks](https://arxiv.org/abs/2305.11141)
-
-<!-- Add assets/figure.png -->
-
+# [Clifford Group Equivariant Networks (NeurIPS 2023 Oral)](https://arxiv.org/abs/2305.11141)
 ![Figure 1](assets/figure.png)
 
 **Authors:** David Ruhe, Johannes Brandstetter, Patrick Forré
 
-**arXiv:** [https://arxiv.org/abs/2305.11141](https://arxiv.org/abs/2305.11141)
+<a href="https://arxiv.org/abs/2305.11141">
+    <strong>Paper Link: </strong> <img src="https://upload.wikimedia.org/wikipedia/commons/b/bc/ArXiv_logo_2022.svg" height="20" alt="arXiv">
+</a>
+
+<a href="https://colab.research.google.com/drive/1Lwxn11gLBtUkNU9s0DV3QgFFedNjFBl3?usp=sharing">
+    <strong>Google Colaboratory Tutorial:</strong> <img src="https://colab.research.google.com/assets/colab-badge.svg" height="20">
+</a>
+
+<a href="https://davidruhe.github.io">
+    <strong>Blog Post Series C2C:</strong> <img src="https://upload.wikimedia.org/wikipedia/commons/9/91/Octicons-mark-github.svg" height="20">
+</a>
 
 ## Abstract
-We introduce Clifford Group Equivariant Neural Networks: a novel approach for constructing $\mathrm{E}(n)$-equivariant networks. We identify and study the *Clifford group*, a subgroup inside the Clifford algebra, whose definition we slightly adjust to achieve several favorable properties. Primarily, the group's action forms an orthogonal automorphism that extends beyond the typical vector space to the entire Clifford algebra while respecting the multivector grading. This leads to several non-equivalent subrepresentations corresponding to the multivector decomposition. Furthermore, we prove that the action respects not just the vector space structure of the Clifford algebra but also its multiplicative structure, i.e., the geometric product. These findings imply that every polynomial in multivectors, including their grade projections, constitutes an equivariant map with respect to the Clifford group, allowing us to parameterize equivariant neural network layers. Notable advantages are that these layers operate directly on a vector basis and elegantly generalize to any dimension. We demonstrate, notably from a single core implementation, state-of-the-art performance on several distinct tasks, including a three-dimensional $n$-body experiment, a four-dimensional Lorentz-equivariant high-energy physics experiment, and a five-dimensional convex hull experiment.
+We introduce Clifford Group Equivariant Neural Networks: a novel approach for constructing $\mathrm{O}(n)$- and $\mathrm{E}(n)$-equivariant models.
+We identify and study the *Clifford group*, a subgroup inside the Clifford algebra whose definition we adjust to achieve several favorable properties.
+Primarily, the group's action forms an orthogonal automorphism that extends beyond the typical vector space to the entire Clifford algebra while respecting the multivector grading. This leads to several non-equivalent subrepresentations corresponding to the multivector decomposition. 
+Furthermore, we prove that the action respects not just the vector space structure of the Clifford algebra but also its multiplicative structure, i.e., the geometric product.
+These findings imply that every polynomial in multivectors, 
+including their grade projections, 
+constitutes an equivariant map with respect to the Clifford group, allowing us to parameterize equivariant neural network layers.
+An advantage worth mentioning is that we obtain expressive layers that can elegantly generalize to inner-product spaces of any dimension.
+We demonstrate, notably from a single core implementation, state-of-the-art performance on several distinct tasks, including a three-dimensional $n$-body experiment, a four-dimensional Lorentz-equivariant high-energy physics experiment, and a five-dimensional convex hull experiment.
 
 ## Requirements and Installation
 
@@ -22,6 +37,8 @@ We introduce Clifford Group Equivariant Neural Networks: a novel approach for co
 
 ## Tutorial
 Check `notebooks/tutorial.ipynb` for a tiny introduction to the Clifford equivariant layers.
+There's also a tutorial given at [![https://colab.research.google.com/drive/1Lwxn11gLBtUkNU9s0DV3QgFFedNjFBl3?usp=sharing](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1Lwxn11gLBtUkNU9s0DV3QgFFedNjFBl3?usp=sharing).
+
 
 ## Code Organization
 
@@ -50,7 +67,7 @@ For the top tagging experiment, download the data using instructions from the [L
 ```python hulls.py -C configs/engineer/trainer.yaml -C configs/optimizer/adam.yaml -C configs/dataset/hulls.yaml -C configs/model/hulls_cgmlp.yaml --trainer.max_steps=131072 --trainer.val_check_interval=1024 --dataset.batch_size=128 --dataset.num_samples=65536 --model.hidden_features=32 --model.num_layers=4 --optimizer.lr=0.001```
 
 ### O(5) Experiment: Regression
-```python o5_regression.py -C configs/engineer/trainer.yaml -C configs/optimizer/adam.yaml -C configs/dataset/o5_regression.yaml -C configs/model/o5_cgmlp.yaml--trainer.max_steps=131072 --trainer.val_check_interval=1024 --dataset.batch_size=32 --dataset.num_samples=50000 --optimizer.lr=0.001```
+```python o5_regression.py -C configs/engineer/trainer.yaml -C configs/optimizer/adam.yaml -C configs/dataset/o5_regression.yaml -C configs/model/o5_cgmlp.yaml --trainer.max_steps=131072 --trainer.val_check_interval=1024 --dataset.batch_size=32 --dataset.num_samples=50000 --optimizer.lr=0.001```
 
 ### O(3) Experiment: $n$-body.
 ```python nbody.py -C configs/engineer/trainer.yaml -C configs/optimizer/adam.yaml -C configs/dataset/nbody.yaml -C configs/model/nbody_cggnn.yaml --trainer.val_check_interval=128 --trainer.max_steps=131072 --dataset.batch_size=100 --dataset.num_samples=3000 --optimizer.lr=0.004 --optimizer.weight_decay=0.0001```
@@ -62,10 +79,12 @@ For the top tagging experiment, download the data using instructions from the [L
 ## Citation
 If you found this code useful, please cite our paper:
 ```
-@article{ruhe2023clifford,
-  title={Clifford group equivariant neural networks},
-  author={Ruhe, David and Brandstetter, Johannes and Forr{\'e}, Patrick},
-  journal={arXiv preprint arXiv:2305.11141},
-  year={2023}
+@inproceedings{
+ruhe2023clifford,
+title={Clifford Group Equivariant Neural Networks},
+author={Ruhe, David and Brandstetter, Johannes and Forr{\'e}, Patrick},
+booktitle={Thirty-seventh Conference on Neural Information Processing Systems},
+year={2023},
+url={https://openreview.net/forum?id=n84bzMrGUD}
 }
 ```

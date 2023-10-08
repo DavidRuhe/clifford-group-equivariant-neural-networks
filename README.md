@@ -19,6 +19,7 @@
     <strong>Blog Post Series C2C:</strong> <img src="https://upload.wikimedia.org/wikipedia/commons/9/91/Octicons-mark-github.svg" height="20">
 </a>
 </li>
+</ul>
 
 ## Abstract
 We introduce Clifford Group Equivariant Neural Networks: a novel approach for constructing $\mathrm{O}(n)$- and $\mathrm{E}(n)$-equivariant models.

@@ -9,9 +9,9 @@ from models.modules.linear import MVLinear
 
 class O5CGMLP(nn.Module):
     def __init__(
+        self,
         ymean, 
         ystd,
-        self,
     ):
         super().__init__()
         self.algebra = CliffordAlgebra(
@@ -48,6 +48,9 @@ class O5CGMLP(nn.Module):
                 "loss": Loss(),
             }
         )
+
+        self.ymean = ymean
+        self.ystd = ystd
 
     def _forward(self, x):
         gp = self.gp(x)

@@ -7,9 +7,11 @@
     <strong>Paper Link: </strong> <img src="https://upload.wikimedia.org/wikipedia/commons/b/bc/ArXiv_logo_2022.svg" height="20" alt="arXiv">
 </a>
 
+
 <a href="https://colab.research.google.com/drive/1Lwxn11gLBtUkNU9s0DV3QgFFedNjFBl3?usp=sharing">
     <strong>Google Colaboratory Tutorial:</strong> <img src="https://colab.research.google.com/assets/colab-badge.svg" height="20">
 </a>
+
 
 <a href="https://davidruhe.github.io">
     <strong>Blog Post Series C2C:</strong> <img src="https://upload.wikimedia.org/wikipedia/commons/9/91/Octicons-mark-github.svg" height="20">

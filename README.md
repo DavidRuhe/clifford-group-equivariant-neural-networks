@@ -60,7 +60,7 @@ For the top tagging experiment, download the data using instructions from the [L
 
 
 ### O(3) Experiment: Signed Volumes
-```python o3.py -C configs/engineer/trainer.yaml -C configs/optimizer/adam.yaml -C configs/dataset/o3.yaml -C configs/model/o3_cgmlp.yaml --trainer.max_steps=131072 --trainer.val_check_interval=1024 --dataset.batch_size=128 --dataset.num_samples=65536 --model.hidden_features=192 --model.num_layers=4 --optimizer.lr=0.001```
+```python o3.py -C configs/engineer/trainer.yaml -C configs/optimizer/adam.yaml -C configs/dataset/o3.yaml -C configs/model/o3_cgmlp.yaml --trainer.max_steps=131072 --trainer.val_check_interval=1024 --dataset.batch_size=128 --dataset.num_samples=65536 --model.hidden_features=96 --model.num_layers=4 --optimizer.lr=0.001```
 
 
 ### O(5) Experiment: Convex Hulls

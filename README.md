@@ -15,7 +15,7 @@
 </a>
 </li>
 <li>
-<a href="https://davidruhe.github.io">
+<a href="https://davidruhe.github.io/2023/06/14/clifford-group.html">
     <strong>Blog Post Series C2C:</strong> <img src="https://upload.wikimedia.org/wikipedia/commons/9/91/Octicons-mark-github.svg" height="20">
 </a>
 </li>

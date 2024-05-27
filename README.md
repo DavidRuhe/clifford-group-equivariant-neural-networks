@@ -21,6 +21,11 @@
 </li>
 </ul>
 
+## Related Repositories
+- [Clifford Group-Equivariant Simplicial Message Passing Networks](https://github.com/congliuUvA/Clifford-Group-Equivariant-Simplicial-Message-Passing-Networks)
+- [Clifford-Steerable CNNs](https://github.com/maxxxzdn/clifford-group-equivariant-cnns)
+- [Geometric Algebra Transformer](https://github.com/Qualcomm-AI-research/geometric-algebra-transformer)
+
 ## Abstract
 We introduce Clifford Group Equivariant Neural Networks: a novel approach for constructing $\mathrm{O}(n)$- and $\mathrm{E}(n)$-equivariant models.
 We identify and study the *Clifford group*, a subgroup inside the Clifford algebra whose definition we adjust to achieve several favorable properties.

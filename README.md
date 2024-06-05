@@ -25,6 +25,7 @@
 - [Clifford Group-Equivariant Simplicial Message Passing Networks](https://github.com/congliuUvA/Clifford-Group-Equivariant-Simplicial-Message-Passing-Networks)
 - [Clifford-Steerable CNNs](https://github.com/maxxxzdn/clifford-group-equivariant-cnns)
 - [Geometric Algebra Transformer](https://github.com/Qualcomm-AI-research/geometric-algebra-transformer)
+- [Multivector Neurons: Better and Faster O(n)-Equivariant Clifford GNNs](https://github.com/congliuUvA/Multivector-Neurons)
 
 ## Abstract
 We introduce Clifford Group Equivariant Neural Networks: a novel approach for constructing $\mathrm{O}(n)$- and $\mathrm{E}(n)$-equivariant models.

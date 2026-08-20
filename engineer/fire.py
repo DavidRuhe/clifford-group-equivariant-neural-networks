@@ -91,7 +91,8 @@ def fire(function: Callable[[dict[Any, Any]], None]):
     if USE_DISTRIBUTED:
         dist_cfg = _ddp_setup()
     config["dist"] = dist_cfg
-
+    
+    config["model"]["compile"] = False #global default false to be changed by task dataset
     function(config)
 
     tempdir.cleanup()

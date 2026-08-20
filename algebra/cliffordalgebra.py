@@ -7,6 +7,31 @@ from torch import nn
 from .metric import ShortLexBasisBladeOrder, construct_gmt, gmt_element
 
 
+def sparse_gp_tables(algebra, path_idx):
+    """(_sp_path, _sp_val, _sp_sel) for the sparse gp_impl: for each (left blade i, output
+    blade j) the unique right blade is algebra.gp_k_idx[i, j]; the weight that entry sees is
+    the compact path weight of the grade triple (g_i, g_j, g_k), or zero where product_paths
+    masks the triple. One definition per self-contained file (review finding: this was
+    copy-pasted at every layer).
+
+    _sp_sel is the transpose of that map, (n_paths, n_blades**2), scaled by the same +-1
+    cayley value: `dL/dweight = einsum(...).flatten(-2) @ _sp_sel.T` is the segment-sum
+    that gathers each compact path's (i, j) entries back together. Autograd would spell
+    that as an index_add_, which is nondeterministic on CUDA; the GEMM is not, and at 35 x
+    256 it is free. Used by sparse_gp.SparseGeometricProduct.backward.
+    """
+    g = algebra.bbo_grades.long()
+    lookup = torch.full((algebra.n_subspaces,) * 3, -1, dtype=torch.long)
+    lookup[path_idx[0], path_idx[1], path_idx[2]] = torch.arange(path_idx.shape[1])
+    p = lookup[g[:, None], g[None, :], g[algebra.gp_k_idx]]
+    sp_path, sp_val = p.clamp(min=0), algebra.gp_val * (p >= 0)
+    sel = torch.zeros(path_idx.shape[1], sp_path.numel(), dtype=sp_val.dtype)
+    # columns are unique by construction, so masked triples write their own zero and
+    # cannot clobber a live entry that happens to share the clamped path index 0
+    sel[sp_path.reshape(-1), torch.arange(sp_path.numel())] = sp_val.reshape(-1)
+    return sp_path, sp_val, sel
+
+
 class CliffordAlgebra(nn.Module):
     def __init__(self, metric):
         super().__init__()
@@ -56,6 +81,26 @@ class CliffordAlgebra(nn.Module):
             torch.pow(-1, self.bbo_grades * (self.bbo_grades + 1) // 2),
             persistent=False,
         )
+                # ---- sparse-GP support: one-output-blade structure + the blade bijection ----
+        # invariant 1: at most one nonzero output blade per (i, j) -- any diagonal metric
+        assert ((cayley != 0).sum(-1) <= 1).all(), \
+            "cayley lost the one-nonzero-per-(i,j) property"
+        gp_k_idx = cayley.abs().argmax(dim=-1)                    # k(i, j)
+        self.register_buffer("gp_k_idx", gp_k_idx, persistent=False)
+        self.register_buffer(
+            "gp_sign",
+            torch.gather(cayley, -1, gp_k_idx.unsqueeze(-1)).squeeze(-1),
+            persistent=False,
+        )
+        # invariant 2: for fixed i, j -> k(i, j) is a bijection. HOLDS iff the metric has
+        # no zero entries (left mult by a basis blade is then a signed basis permutation).
+        # Degenerate algebras (PGA etc.) FAIL HERE, on purpose: the sparse backward's
+        # dL/dy inverts this map, so those algebras must keep gp_impl="einsum".
+        _ar = torch.arange(self.n_blades)
+        assert (gp_k_idx.sort(-1).values == _ar).all(), (
+            "metric has a zero entry (degenerate algebra): j->k is not a bijection, "
+            "gp_impl='sparse' is unsupported here -- use the default einsum")
+        self.register_buffer("gp_j_idx", gp_k_idx.argsort(-1), persistent=False)
 
     def geometric_product(self, a, b, blades=None):
         cayley = self.cayley

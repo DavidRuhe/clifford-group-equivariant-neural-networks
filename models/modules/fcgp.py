@@ -15,6 +15,7 @@ class FullyConnectedSteerableGeometricProductLayer(nn.Module):
         out_features,
         include_first_order=True,
         normalization_init=0,
+        gp_imp
     ):
         super().__init__()
 
@@ -32,12 +33,19 @@ class FullyConnectedSteerableGeometricProductLayer(nn.Module):
         self.linear_right = MVLinear(algebra, in_features, in_features, bias=False)
         if include_first_order:
             self.linear_left = MVLinear(algebra, in_features, out_features, bias=True)
-
+            
+        self.gp_impl = gp_impl
         self.product_paths = algebra.geometric_product_paths
         self.weight = nn.Parameter(
             torch.empty(out_features, in_features, self.product_paths.sum())
         )
-
+        if gp_impl == "sparse":
+            from algebra.cliffordalgebra import sparse_gp_tables
+            path_idx = self.product_paths.nonzero().T.contiguous()
+            sp_path, sp_val, sp_sel = sparse_gp_tables(algebra, path_idx)
+            self.register_buffer("_sp_path", sp_path, persistent=False)
+            self.register_buffer("_sp_val", sp_val, persistent=False)
+            self.register_buffer("_sp_sel", sp_sel, persistent=False)
         self.reset_parameters()
 
     def reset_parameters(self):
@@ -63,16 +71,23 @@ class FullyConnectedSteerableGeometricProductLayer(nn.Module):
         )
         return self.algebra.cayley * weight_repeated
 
-    def forward(self, input):
-        input_right = self.linear_right(input)
+    def forward(self, input, input_right=None, left=None):
+        if input_right is None:
+            input_right = self.linear_right(input)
         input_right = self.normalization(input_right)
-
-        weight = self._get_weight()
-
-        if self.include_first_order:
-            return (
-                self.linear_left(input)
-                + torch.einsum("bni, mnijk, bnk -> bmj", input, weight, input_right)
-            ) / math.sqrt(2)
+    
+        if self.gp_impl == "sparse":
+            from models.modules.sparse_gp import sparse_geometric_product
+            product = sparse_geometric_product(
+                input, input_right, self.weight,
+                self.algebra, self._sp_path, self._sp_val, self._sp_sel)
         else:
-            return torch.einsum("bni, mnijk, bnk -> bmj", input, weight, input_right)
+            weight = self._get_weight()
+            outer = torch.einsum("bnk,bni->bnki", input_right, input)
+            product = torch.einsum("bnki,mnijk->bmj", outer, weight)
+    
+        if self.include_first_order:
+            if left is None:
+                left = self.linear_left(input)
+            return (left + product) / math.sqrt(2)
+        return product

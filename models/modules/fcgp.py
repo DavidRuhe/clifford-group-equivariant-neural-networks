@@ -34,6 +34,8 @@ class FullyConnectedSteerableGeometricProductLayer(nn.Module):
             self.linear_left = MVLinear(algebra, in_features, out_features, bias=True)
 
         self.product_paths = algebra.geometric_product_paths
+        self.register_buffer("_path_idx", self.product_paths.nonzero().T.contiguous(),
+                             persistent=False)
         self.weight = nn.Parameter(
             torch.empty(out_features, in_features, self.product_paths.sum())
         )
@@ -54,12 +56,10 @@ class FullyConnectedSteerableGeometricProductLayer(nn.Module):
             dtype=self.weight.dtype,
             device=self.weight.device,
         )
-        weight[:, :, self.product_paths] = self.weight
-        subspaces = self.algebra.subspaces
+        weight[:, :, self._path_idx[0], self._path_idx[1], self._path_idx[2]] = self.weight
+        bsi = self.algebra.blade_subspace_idx
         weight_repeated = (
-            weight.repeat_interleave(subspaces, dim=-3)
-            .repeat_interleave(subspaces, dim=-2)
-            .repeat_interleave(subspaces, dim=-1)
+            weight.index_select(-3, bsi).index_select(-2, bsi).index_select(-1, bsi)
         )
         return self.algebra.cayley * weight_repeated
 
@@ -70,9 +70,11 @@ class FullyConnectedSteerableGeometricProductLayer(nn.Module):
         weight = self._get_weight()
 
         if self.include_first_order:
+            outer = torch.einsum("bnk,bni->bnki", input_right, input)
             return (
                 self.linear_left(input)
-                + torch.einsum("bni, mnijk, bnk -> bmj", input, weight, input_right)
+                + torch.einsum("bnki,mnijk->bmj", outer, weight)
             ) / math.sqrt(2)
         else:
-            return torch.einsum("bni, mnijk, bnk -> bmj", input, weight, input_right)
+            outer = torch.einsum("bnk,bni->bnki", input_right, input)
+            return torch.einsum("bnki,mnijk->bmj", outer, weight)

@@ -16,8 +16,11 @@ def main(config):
 
     model_config = config["model"]
     model_module = engineer.load_module(model_config.pop("module"))
+    compile_model = model_config.pop("compile", False)
     model = model_module(**model_config)
-
+    if compile_model:
+        model.compile(dynamic=True)    # dynamic=True since batch shapes vary per step here 
+    
     if config["dist"] is not None:
         local_rank = config["dist"]["local_rank"]
         device = torch.device(f"cuda:{local_rank}")

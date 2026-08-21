@@ -49,7 +49,7 @@ class MVLinear(nn.Module):
         return torch.einsum("bm...i, nm->bn...i", input, self.weight)
 
     def _forward_subspaces(self, input):
-        weight = self.weight.repeat_interleave(self.algebra.subspaces, dim=-1)
+        weight = self.weight.index_select(-1, self.algebra.blade_subspace_idx)
         return torch.einsum("bm...i, nmi->bn...i", input, weight)
 
     def forward(self, input):

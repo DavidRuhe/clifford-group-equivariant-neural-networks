@@ -12,7 +12,7 @@ from models.modules.mvsilu import MVSiLU
 
 
 def get_invariants(algebra, input):
-    norms = algebra.qs(input, grades=algebra.grades[1:])
+    norms = algebra.qs(input, grades=algebra.grades_list[1:])
     return torch.cat([input[..., :1], *norms], dim=-1)
 
 
@@ -235,7 +235,7 @@ class CGLayer(nn.Module):
             weights = self.psi_x(m_h).view(
                 len(m_h), self.out_features_x, self.algebra.n_subspaces
             )
-            weights = torch.repeat_interleave(weights, self.algebra.subspaces, dim=2)
+            weights = weights.index_select(2, self.algebra.blade_subspace_idx)
             m_x = m_x * torch.sigmoid(weights)
 
         x_red = self.reduce(m_x.flatten(1), i, num_segments=x.size(0)).view(
@@ -258,7 +258,7 @@ class CGLayer(nn.Module):
                 len(h_u), self.out_features_x, self.algebra.n_subspaces
             )
 
-            weights = torch.repeat_interleave(weights, self.algebra.subspaces, dim=2)
+            weights = weights.index_select(2, self.algebra.blade_subspace_idx)
             x_u = x_u * torch.sigmoid(weights)
 
         if self.residual and self.in_features_h == self.out_features_h:

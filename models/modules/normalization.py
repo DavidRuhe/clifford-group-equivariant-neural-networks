@@ -18,7 +18,7 @@ class NormalizationLayer(nn.Module):
         norms = torch.cat(self.algebra.norms(input), dim=-1)
         s_a = torch.sigmoid(self.a)
         norms = s_a * (norms - 1) + 1  # Interpolates between 1 and the norm.
-        norms = norms.repeat_interleave(self.algebra.subspaces, dim=-1)
+        norms = norms.index_select(-1, self.algebra.blade_subspace_idx)
         normalized = input / (norms + EPS)
 
         return normalized
